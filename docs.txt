@@ -1,0 +1,189 @@
+Emp:
+EmpID,EmpCode,DOJ,Active,DOB,Location,Status,Position,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
+
+Group:
+GroupID,GroupName,Parameter,Active,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
+
+GroupFlat:
+GroupFlatID,EmpID,GroupID,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
+
+Policy:
+PolicyID,GroupID,Policy,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
+
+PolicyFlat:
+PolicyFlatID,EmpID,GroupFlatID,Policy,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
+
+Catagory:
+CatagoryID,CatagoryName,Active,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
+
+Head:
+HeadID,CatagoryID,HeadName,Active,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
+
+Conveyance:
+ConveyanceID,ConveyanceName,ConveyanceType,Active,Rate,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
+
+RuleConfig:
+RuleConfigID,RuleType,GroupID,CatagoryID,HeadID,ConveyanceID,Active,EligibleAmt,ExcessClaim,ExcessClaimMessage,MaxDOJ,MaxBOB,ConveyanceRate,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
+
+BreClaim:
+ClaimID,EmpID,CatagoryID,Status,Active,ApplicationDate,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
+
+BreClaimDetails:
+ClaimDetailID,ClaimID,HeadID,ConveyanceID,EligibleAmt,BillPeriod,BillDate,ConveyanceRate,Amount,EmpRemarks,EmpExcessClaimRemarks,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
+
+
+CREATE TABLE Emp (
+    EmpID INT PRIMARY KEY AUTO_INCREMENT,
+    EmpCode VARCHAR(50) UNIQUE NOT NULL,
+    DOJ DATE NOT NULL,
+    Active BOOLEAN NOT NULL DEFAULT TRUE,
+    DOB DATE,
+    Location VARCHAR(100),
+    Status VARCHAR(50),
+    Position VARCHAR(50),
+    CreatedBy VARCHAR(50),
+    ModifiedBy VARCHAR(50),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ModifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `Group` (
+    GroupID INT PRIMARY KEY AUTO_INCREMENT,
+    GroupName VARCHAR(100) NOT NULL,
+    Parameter TEXT,
+    Active BOOLEAN NOT NULL DEFAULT TRUE,
+    CreatedBy VARCHAR(50),
+    ModifiedBy VARCHAR(50),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ModifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE GroupFlat (
+    GroupFlatID INT PRIMARY KEY AUTO_INCREMENT,
+    EmpID INT,
+    GroupID INT,
+    CreatedBy VARCHAR(50),
+    ModifiedBy VARCHAR(50),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ModifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (EmpID) REFERENCES Emp(EmpID),
+    FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID)
+);
+
+CREATE TABLE Policy (
+    PolicyID INT PRIMARY KEY AUTO_INCREMENT,
+    GroupID INT,
+    Policy TEXT NOT NULL,
+    CreatedBy VARCHAR(50),
+    ModifiedBy VARCHAR(50),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ModifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID)
+);
+
+CREATE TABLE PolicyFlat (
+    PolicyFlatID INT PRIMARY KEY AUTO_INCREMENT,
+    EmpID INT,
+    GroupFlatID INT,
+    Policy TEXT NOT NULL,
+    CreatedBy VARCHAR(50),
+    ModifiedBy VARCHAR(50),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ModifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (EmpID) REFERENCES Emp(EmpID),
+    FOREIGN KEY (GroupFlatID) REFERENCES GroupFlat(GroupFlatID)
+);
+
+CREATE TABLE Catagory (
+    CatagoryID INT PRIMARY KEY AUTO_INCREMENT,
+    CatagoryName VARCHAR(100) NOT NULL,
+    Active BOOLEAN NOT NULL DEFAULT TRUE,
+    CreatedBy VARCHAR(50),
+    ModifiedBy VARCHAR(50),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ModifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Head (
+    HeadID INT PRIMARY KEY AUTO_INCREMENT,
+    CatagoryID INT,
+    HeadName VARCHAR(100) NOT NULL,
+    Active BOOLEAN NOT NULL DEFAULT TRUE,
+    CreatedBy VARCHAR(50),
+    ModifiedBy VARCHAR(50),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ModifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (CatagoryID) REFERENCES Catagory(CatagoryID)
+);
+
+CREATE TABLE Conveyance (
+    ConveyanceID INT PRIMARY KEY AUTO_INCREMENT,
+    ConveyanceName VARCHAR(100) NOT NULL,
+    ConveyanceType VARCHAR(50),
+    Active BOOLEAN NOT NULL DEFAULT TRUE,
+    Rate DECIMAL(10, 2),
+    CreatedBy VARCHAR(50),
+    ModifiedBy VARCHAR(50),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ModifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE RuleConfigID (
+    RuleConfigIDID INT PRIMARY KEY AUTO_INCREMENT,
+    RuleType VARCHAR(50),
+    GroupID INT,
+    CatagoryID INT,
+    HeadID INT,
+    ConveyanceID INT,
+    Active BOOLEAN NOT NULL DEFAULT TRUE,
+    EligibleAmt DECIMAL(10, 2),
+    ExcessClaim BOOLEAN NOT NULL DEFAULT FALSE,
+    ExcessClaimMessage TEXT,
+    MaxDOJ DATE,
+    MaxBOB DATE,
+    ConveyanceRate DECIMAL(10, 2),
+    CreatedBy VARCHAR(50),
+    ModifiedBy VARCHAR(50),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ModifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID),
+    FOREIGN KEY (CatagoryID) REFERENCES Catagory(CatagoryID),
+    FOREIGN KEY (HeadID) REFERENCES Head(HeadID),
+    FOREIGN KEY (ConveyanceID) REFERENCES Conveyance(ConveyanceID)
+);
+
+CREATE TABLE BreClaim (
+    ClaimID INT PRIMARY KEY AUTO_INCREMENT,
+    EmpID INT,
+    CatagoryID INT,
+    Status VARCHAR(50),
+    Active BOOLEAN NOT NULL DEFAULT TRUE,
+    ApplicationDate DATE,
+    CreatedBy VARCHAR(50),
+    ModifiedBy VARCHAR(50),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ModifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (EmpID) REFERENCES Emp(EmpID),
+    FOREIGN KEY (CatagoryID) REFERENCES Catagory(CatagoryID)
+);
+
+CREATE TABLE BreClaimDetails (
+    ClaimDetailID INT PRIMARY KEY AUTO_INCREMENT,
+    ClaimID INT,
+    HeadID INT,
+    ConveyanceID INT,
+    EligibleAmt DECIMAL(10, 2),
+    BillPeriod VARCHAR(50),
+    BillDate DATE,
+    ConveyanceRate DECIMAL(10, 2),
+    Amount DECIMAL(10, 2),
+    EmpRemarks TEXT,
+    EmpExcessClaimRemarks TEXT,
+    CreatedBy VARCHAR(50),
+    ModifiedBy VARCHAR(50),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ModifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (ClaimID) REFERENCES BreClaim(ClaimID),
+    FOREIGN KEY (HeadID) REFERENCES Head(HeadID),
+    FOREIGN KEY (ConveyanceID) REFERENCES Conveyance(ConveyanceID)
+);
