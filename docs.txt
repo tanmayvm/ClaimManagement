@@ -31,6 +31,18 @@ ClaimID,EmpID,CatagoryID,Status,Active,ApplicationDate,CreatedBy,ModifiedBy,Crea
 BreClaimDetails:
 ClaimDetailID,ClaimID,HeadID,ConveyanceID,EligibleAmt,BillPeriod,BillDate,ConveyanceRate,Amount,EmpRemarks,EmpExcessClaimRemarks,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt
 
+select * from emp e ;
+select * from group;
+select * from groupflat g ;
+select * from policy;
+select * from policyflat p ;
+select * from ruleconfig r ;
+select * from catagory c ;
+select * from head c ;
+select * from conveyance c ;
+select * from breclaim;
+select * from breclaimdetails b ;
+
 
 CREATE TABLE Emp (
     EmpID INT PRIMARY KEY AUTO_INCREMENT,

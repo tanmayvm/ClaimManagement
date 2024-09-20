@@ -17,24 +17,24 @@ export async function  breNewClaimSave(req,res) {
     }
     try{
     const claimDataTO =await insertBreClaim(claimTO);
-    const claimDetailTO  = await req.body.claim.map((data)=>
+    console.log(claimDataTO);
+        const claim = req.body.claim;
+    const claimDetailTO  = await    
          insertBreClaimDetail(
             {
                 ClaimID:claimDataTO,
-                HeadID: data.HeadID,
-                ConveyanceID:data.ConveyanceID,
-                EligibleAmt:data.EligibleAmt,
-                BillPeriod:data.BillPeriod,
-                BillDate:data.BillDate,
-                ConveyanceRate:data.ConveyanceRate,
-                Amount:data.Amount,
-                EmpRemarks:data.EmpRemarks,
-                EmpExcessClaimRemarks:data.EmpExcessClaimRemarks,
+                HeadID: claim.HeadID,
+                ConveyanceID:claim.ConveyanceID,
+                EligibleAmt:claim.EligibleAmt,
+                BillPeriod:claim.BillPeriod,
+                BillDate:claim.BillDate,
+                ConveyanceRate:claim.ConveyanceRate,
+                Amount:claim.Amount,
+                EmpRemarks:claim.EmpRemarks,
+                EmpExcessClaimRemarks:claim.EmpExcessClaimRemarks,
                 CreatedBy: req.body.EmpID
             }
-        )
-    )
-    
+        ) 
     console.log(claimDetailTO)
 
    return res.status(200).json({Message:"Claim Submitted Sucessfully"})  
