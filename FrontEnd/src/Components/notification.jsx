@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import './main.css'; // Add your custom styles
+import './main.css';
 
-const Notification = ({ message, type }) => {
+const Notification = ({ message, type, onClose }) => {
+    const [visible, setVisible] = useState(false);
+
     const notificationStyles = {
         success: {
             border: '2px solid #4caf50',
@@ -17,60 +19,43 @@ const Notification = ({ message, type }) => {
         },
     };
 
-    const [notifications, setNotifications] = useState(0)
+
     useEffect(() => {
-        setNotifications(1)
-    }, [message])
+        if (message) {
+            setVisible(true);
+            const timer = setTimeout(() => {
+                setVisible(false);
+                if (onClose) onClose();
+            }, 5000);
 
-    const onClose = () => { setNotifications(0) }
+            return () => clearTimeout(timer);
+        }
+    }, [message, onClose]);
 
-    setTimeout(() => {
-        setNotifications(0)
-    }, 10000); // 10 seconds
-    return (<div>
-        {notifications === 1 && <div style={{
-            ...notificationStyles[type],
-            padding: '10px',
-            margin: '10px 0',
-            borderRadius: '5px',
-        }}
-            >
-            <span>{message}</span>
-            <button onClick={onClose} style={{ marginLeft: '10px' }}>Close</button>
-        </div>}</div>
+    const onClose1 = () => {
+        setVisible(false);
+        if (onClose) onClose();
+    };
+
+    return (
+        <div>
+            {visible && (
+                <div
+                    style={{
+                        ...notificationStyles[type] || notificationStyles.default,
+                        padding: '10px',
+                        margin: '10px 0',
+                        borderRadius: '5px',
+                    }}
+                >
+                    <span>{message}</span>
+                    <button onClick={onClose1} style={{ marginLeft: '10px' }}>
+                        Close
+                    </button>
+                </div>
+            )}
+        </div>
     );
 };
-
-// const NotificationContainer = () => {
-//     const [notifications, setNotifications] = useState([]);
-
-//     const addNotification = (message, type) => {
-//         setNotifications([...notifications, { message, type }]);
-//         setTimeout(() => {
-//             setNotifications((prev) => prev.filter((n) => n.message !== message));
-//         }, 3000); // Auto-close after 3 seconds
-//     };
-
-//     return (
-//         <div>
-//             <button onClick={() => addNotification("This is a success notification!", "success")}>
-//                 Show Success Notification
-//             </button>
-//             <button onClick={() => addNotification("This is an error notification!", "error")}>
-//                 Show Error Notification
-//             </button>
-//             <div className="notifications">
-//                 {notifications.map((notif, index) => (
-//                     <Notification
-//                         key={index}
-//                         message={notif.message}
-//                         type={notif.type}
-//                         onClose={() => setNotifications((prev) => prev.filter((n) => n.message !== notif.message))}
-//                     />
-//                 ))}
-//             </div>
-//         </div>
-//     );
-// };
 
 export default Notification;

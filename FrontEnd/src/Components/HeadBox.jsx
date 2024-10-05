@@ -7,6 +7,7 @@ const HeadBox = (props) => {
     const [head, sethead] = useState([]);
     const [breDetail, setbreDetail] = useState([]);
     const formRef = useRef(null);
+    const [viewHead, setViewHead] = useState(0);
     const [headForm, setHeadForm] = useState(
         {
             "ClaimDetailID": null,
@@ -24,6 +25,7 @@ const HeadBox = (props) => {
             "Active": 1
         }
     );
+
 
     useEffect(() => {
         setHeadForm(prevForm => ({ ...prevForm, ...props.claimID }));
@@ -44,7 +46,7 @@ const HeadBox = (props) => {
         }
 
         fetchData();
-    }, []);
+    }, [props.CatagoryID]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -52,17 +54,35 @@ const HeadBox = (props) => {
                 const response = await FetchBreDetail({ "ClaimID": props.claimID });
                 console.log(response)
                 setbreDetail(response);
-                
+
 
             } catch (error) {
                 console.error('Error fetching category data:', error);
             }
         }
-        if(props.claimID){
-        fetchData();
-    }
+        if (props.claimID) {
+            fetchData();
+        }
     }, [props.ClaimID]);
 
+    const AddNewHead = () => {
+        setHeadForm({
+            "ClaimDetailID": null,
+            "CatagoryID": null,
+            "HeadID": null,
+            "ConveyanceID": null,
+            "EligibleAmt": null,
+            "BillPeriod": null,
+            "BillDate": null,
+            "ConveyanceRate": null,
+            "Amount": null,
+            "EmpRemarks": null,
+            "EmpExcessClaimRemarks": null,
+            "Status": null,
+            "Active": 1
+        })
+        setViewHead(1);
+    }
 
     const handleChange = (name, value) => {
         if (name === 'HeadName') {
@@ -71,28 +91,44 @@ const HeadBox = (props) => {
         setHeadForm(prevForm => ({ ...prevForm, [name]: value }));
     }
 
-    const [message,setmessage]= useState();
-    const [messageType,setmessageType]= useState();
+    const [message, setmessage] = useState();
+    const [messageType, setmessageType] = useState();
 
-     const  handleClick = async () => {        
-                    try {
-                         
-                            const response =await  FetchSaveHead({
-                                "ClaimID": props.claimID,
-                                "EmpID": 1,
-                                "CatagoryID": props.CatagoryID,
-                                "State": "Saved",
-                                "ApplicationDate": new Date().toISOString().split('T')[0],
-                                "claim": headForm
-                            });
-                            console.log(response)
-                            setmessage("Claim saved Successfully")
-                            setmessageType("success");
-                            setbreDetail(response.data);
-                    } catch (error) {
-                        console.error('Error Saving Head data:', error);
-                    }
-                }
+    const handleClick = async () => {
+        try {
+
+            const response = await FetchSaveHead({
+                "ClaimID": props.claimID,
+                "EmpID": 1,
+                "CatagoryID": props.CatagoryID,
+                "State": "Saved",
+                "ApplicationDate": new Date().toISOString().split('T')[0],
+                "claim": headForm
+            });
+            console.log(response)
+            setmessage("Claim saved Successfully")
+            setmessageType("success");
+            setbreDetail(response.data);
+            setViewHead(0);
+            setHeadForm({
+                "ClaimDetailID": null,
+                "CatagoryID": null,
+                "HeadID": null,
+                "ConveyanceID": null,
+                "EligibleAmt": null,
+                "BillPeriod": null,
+                "BillDate": null,
+                "ConveyanceRate": null,
+                "Amount": null,
+                "EmpRemarks": null,
+                "EmpExcessClaimRemarks": null,
+                "Status": null,
+                "Active": 1
+            })
+        } catch (error) {
+            console.error('Error Saving Head data:', error);
+        }
+    }
 
     const handleClickCancle = () => {
         setHeadForm({
@@ -110,16 +146,21 @@ const HeadBox = (props) => {
             "Status": null,
             "Active": 1
         })
+        setViewHead(0);
     }
 
     const editHeadClaim = (i) => {
         console.log('BreDetailID', breDetail[i]);
+        setViewHead(1);
         setHeadForm(breDetail[i])
     }
 
     return <div>
-        <Notification message={message} type={messageType}/>
-        <form ref={formRef}>
+        <Notification message={message} type={messageType} onClose={() => { setmessage(null); setmessageType(null); }} />
+        <div style={{ textAlign: 'right', borderRight: '50px' }}>
+            <button onClick={AddNewHead}>Add Head</button>
+        </div>
+        {viewHead === 1 && <div> <form ref={formRef}>
             <label>Head:<select id="dropdown" name="HeadID"
                 value={headForm.HeadID}
                 onChange={e => handleChange(e.target.name, e.target.value)}>
@@ -129,16 +170,17 @@ const HeadBox = (props) => {
             </select>
             </label>
             <label>EligibleAmt:{headForm.EligibleAmt}</label>
-            <label>BillPeriod:<input type='text' name='BillPeriod' value={headForm.BillPeriod } onChange={e => handleChange(e.target.name, e.target.value)}></input></label>
-            <label>BillDate:<input type='date' name='BillDate' value={headForm.BillDate } onChange={e => handleChange(e.target.name, e.target.value)}></input></label>
-            <label>ConveyanceRate:{headForm.BillDate }</label>
-            <label>Amount:<input type='text' name='Amount' value={headForm.Amount } onChange={e => handleChange(e.target.name, e.target.value)}></input></label>
-            <label>EmpRemarks:<input type='text' name='EmpRemarks' value={headForm.EmpRemarks } onChange={e => handleChange(e.target.name, e.target.value)}></input></label>
-            <label>EmpExcessClaimRemarks:<input type='text' name='EmpExcessClaimRemarks' value={headForm.EmpExcessClaimRemarks } onChange={e => handleChange(e.target.name, e.target.value)}></input></label>
+            <label>BillPeriod:<input type='text' name='BillPeriod' value={headForm.BillPeriod} onChange={e => handleChange(e.target.name, e.target.value)}></input></label>
+            <label>BillDate:<input type='date' name='BillDate' value={headForm.BillDate} onChange={e => handleChange(e.target.name, e.target.value)}></input></label>
+            <label>ConveyanceRate:{headForm.BillDate}</label>
+            <label>Amount:<input type='text' name='Amount' value={headForm.Amount} onChange={e => handleChange(e.target.name, e.target.value)}></input></label>
+            <label>EmpRemarks:<input type='text' name='EmpRemarks' value={headForm.EmpRemarks} onChange={e => handleChange(e.target.name, e.target.value)}></input></label>
+            <label>EmpExcessClaimRemarks:<input type='text' name='EmpExcessClaimRemarks' value={headForm.EmpExcessClaimRemarks} onChange={e => handleChange(e.target.name, e.target.value)}></input></label>
         </form>
-        <button onClick={handleClick}>Save</button>
-        <button onClick={handleClickCancle}>Cancle</button>
-
+            <button onClick={handleClick}>Save</button>
+            <button onClick={handleClickCancle}>Cancle</button>
+        </div>
+        }
         <table>
             <thead>
                 <tr>
