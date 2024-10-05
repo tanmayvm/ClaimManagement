@@ -63,7 +63,7 @@ export const  FetchSaveHead = async (reqBody)=>{
           throw new Error('Failed to fetch profile');
         }
         const json = await response.json();
-        return json.data;
+        return json;
         // setData(json.data);
       } catch (error) {
         console.error("ViewProfileerror", error);

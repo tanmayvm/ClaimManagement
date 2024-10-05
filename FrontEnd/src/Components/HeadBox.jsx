@@ -21,7 +21,7 @@ const HeadBox = (props) => {
             "EmpRemarks": null,
             "EmpExcessClaimRemarks": null,
             "Status": null,
-            "Active": null
+            "Active": 1
         }
     );
 
@@ -51,7 +51,7 @@ const HeadBox = (props) => {
             try {
                 const response = await FetchBreDetail({ "ClaimID": props.claimID });
                 console.log(response)
-               
+                setbreDetail(response);
                 
 
             } catch (error) {
@@ -77,7 +77,7 @@ const HeadBox = (props) => {
      const  handleClick = async () => {        
                     try {
                          
-                            const response =  FetchSaveHead({
+                            const response =await  FetchSaveHead({
                                 "ClaimID": props.claimID,
                                 "EmpID": 1,
                                 "CatagoryID": props.CatagoryID,
@@ -88,7 +88,7 @@ const HeadBox = (props) => {
                             console.log(response)
                             setmessage("Claim saved Successfully")
                             setmessageType("success");
-                            setbreDetail(response);
+                            setbreDetail(response.data);
                     } catch (error) {
                         console.error('Error Saving Head data:', error);
                     }
@@ -108,7 +108,7 @@ const HeadBox = (props) => {
             "EmpRemarks": null,
             "EmpExcessClaimRemarks": null,
             "Status": null,
-            "Active": null
+            "Active": 1
         })
     }
 
@@ -154,7 +154,6 @@ const HeadBox = (props) => {
                 {breDetail.map((item, index) => (
                     <tr key={item.HeadID}>
                         <td>{item.HeadName}</td>
-                        {/* <td>{item.BillDate}</td> */}
                         <td>{item.Amount}</td>
                         <td>{item.BillDate}</td>
                         <td>{item.ApprovedAmount}</td>
