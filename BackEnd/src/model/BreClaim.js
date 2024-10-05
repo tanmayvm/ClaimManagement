@@ -2,6 +2,7 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from './database.js'; // Adjust the path to your database connection
 import Emp from './Emp.js'; // Adjust the path
 import Catagory from './Catagory.js'; // Adjust the path
+import Head from './Head.js';
 
 const BreClaim = sequelize.define('BreClaim', {
   ClaimID: {
@@ -29,6 +30,8 @@ const BreClaim = sequelize.define('BreClaim', {
     defaultValue: true,
   },
   ApplicationDate: DataTypes.DATE,
+  ClaimCode: DataTypes.STRING(50),
+  TotalAmount: DataTypes.DOUBLE,
   CreatedBy: DataTypes.STRING(50),
   ModifiedBy: DataTypes.STRING(50),
   CreatedAt: {
@@ -45,4 +48,7 @@ const BreClaim = sequelize.define('BreClaim', {
   timestamps: false,
 });
 
+Catagory.hasMany(BreClaim,{foreignKey:'CatagoryID'});
+BreClaim.belongsTo(Catagory,{foreignKey:'CatagoryID'});
 export default BreClaim;
+

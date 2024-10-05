@@ -54,7 +54,8 @@ const BreClaimDetails = sequelize.define('BreClaimDetails', {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
     onUpdate: DataTypes.NOW,
-  }
+  },
+  Active:DataTypes.INTEGER
 },{
   tableName: 'BreClaimDetails',
   timestamps: false,
@@ -64,4 +65,6 @@ const BreClaimDetails = sequelize.define('BreClaimDetails', {
 BreClaim.hasMany(BreClaimDetails,{foreignKey:'ClaimID'});
 BreClaimDetails.belongsTo(BreClaim,{foreignKey:'ClaimID'});
 
+Head.hasMany(BreClaimDetails,{foreignKey:'HeadID'});
+BreClaimDetails.belongsTo(Head,{foreignKey:'HeadID'});
 export default BreClaimDetails;

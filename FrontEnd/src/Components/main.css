@@ -1,0 +1,78 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd; /* Light gray border */
+}
+
+th {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+
+tr:hover {
+    background-color: #ddd; /* Darker gray on hover */
+}
+
+button {
+    padding: 8px 12px;
+    background-color: #007BFF; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Adjust spacing between rows */
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    width: 45%; /* Adjust width as needed */
+}
+
+input {
+    margin-top: 5px; /* Spacing between label and input */
+    padding: 5px; /* Padding for better user experience */
+}
+
+
+.notifications {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px; /* Adjust as necessary */
+    z-index: 1000; /* Ensure it appears above other content */
+}
+
+.notification {
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

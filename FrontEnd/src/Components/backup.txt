@@ -1,0 +1,144 @@
+import React, { useEffect, useState ,useParams} from 'react'
+import { FetchCatagory, FetchHead, FetchSaveHead, FetchClaimList, FetchClaimDetail } from './fetchAPI'
+import HeadBox from './HeadBox';
+import CatagoryBox from './CatagoryBox'
+import './main.css'
+
+const BreMain = () => {
+    const [catID, setCatID] = useState('')
+    const [headFormList, setHeadList] = useState([]);
+    const [claimList, setClaimList] = useState([]);
+    const [saveClaim, setSaveClaim] = useState([]);
+    const [viewHead, setViewHead] = useState(0);
+    const { claimId } = useParams();  
+    const getCat = (catID) => {
+        setCatID(catID);
+        console.log('catID:', catID)
+    }
+
+
+    useEffect(() => {
+        const response = async () => {
+            try {
+                if (saveClaim.HeadID) {
+                    const response = await FetchSaveHead({
+                        "ClaimID": null,
+                        "EmpID": 1,
+                        "CatagoryID": catID,
+                        "State": "Saved",
+                        "ApplicationDate": new Date().toISOString().split('T')[0],
+                        "claim": saveClaim
+                    });
+                    console.log(response)
+                }
+
+            } catch (error) {
+                console.error('Error Saving Head data:', error);
+            }
+        }
+        response();
+    }, [])
+
+
+
+
+    const getHead = (headValue) => {
+        // setClaimList(prevList => [...prevList, headValue]);
+        setSaveClaim(headValue);
+        setViewHead(0);
+    }
+
+    const AddNewHead = () => {
+        setViewHead(1);
+    }
+
+    const [editID, setEditID] = useState();
+    const [breClaimID,setBreClaimID]= useState();
+
+    useEffect(()=>{
+        const editClaim = async (index) => {
+            setBreClaimID(claimId)
+            const responce = await FetchClaimDetail({
+                "ClaimID": claimId
+            });
+            getCat(responce.CatagoryID)
+            setViewHead(1);
+            console.log('index:', index)
+            setEditID({
+                "ClaimDetailID": null,
+                "CatagoryID": null,
+                "HeadID": null,
+                "ConveyanceID": null,
+                "EligibleAmt": null,
+                "BillPeriod": null,
+                "BillDate": null,
+                "ConveyanceRate": null,
+                "Amount": null,
+                "EmpRemarks": null,
+                "EmpExcessClaimRemarks": null,
+                "Status": null,
+                "Active": null
+            });
+        }
+        editClaim();
+    },[claimId])
+
+    
+    const [sortedList, setSortedList] = useState(claimList);
+    const [sortOrder, setSortOrder] = useState('asc');
+
+    const handleSort = () => {
+        const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+        const sorted = [...sortedList].sort((a, b) => {
+            const dateA = new Date(a.ApplicationDate);
+            const dateB = new Date(b.ApplicationDate);
+            return newSortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+        });
+        setSortedList(sorted);
+        setSortOrder(newSortOrder);
+    };
+
+    return (
+        <div>
+            <CatagoryBox getCat={setCatID} setCat={catID} />
+            <div style={{ textAlign: 'right', borderRight: '50px' }}>
+                <button onClick={AddNewHead}>Add Head</button>
+            </div>
+
+            {viewHead === 1 && <HeadBox getHead={getHead} CatagoryID={catID} claimID={editID} breClaimID={breClaimID} />}
+            <button >Submit</button>
+            {/* <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                    <tr>
+                        <th>ClaimID</th>
+                        <th>Bill Date</th>
+                        <th>TotalAmount</th>
+                        <th onClick={handleSort} style={{ cursor: 'pointer' }}>ApplicationDate  {sortOrder === 'asc' ? '↑' : '↓'}</th>
+                        <th>ClaimCode</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {claimList.map((item, index) => (
+                        <tr key={item.ClaimID}>
+                            <td>{item.ClaimID}</td>
+                            <td>{item.BillDate}</td>
+                            <td>{item.TotalAmount}</td>
+                            <td>{item.ApplicationDate}</td>
+                            <td>{item.ClaimCode}</td>
+                            <td>{item.Status}</td>
+                            <td>{item.Status === 'Saved' && (
+                                <button onClick={() => editClaim(item.ClaimID)}>Edit</button>
+                            )}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table> */}
+        </div>
+    )
+}
+
+
+export default BreMain;
+

@@ -115,3 +115,47 @@ export const  FetchClaimDetail = async (reqBody)=>{
     }
   // return data;
 }
+
+export const  FetchBreDetail = async (reqBody)=>{
+  // const [data, setData] = useState();
+  try {
+      const response = await fetch('http://localhost:3001/api/getBreDetail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reqBody)
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch profile');
+      }
+      const json = await response.json();
+      return json.data;
+      // setData(json.data);
+    } catch (error) {
+      console.error("ViewProfileerror", error);
+    }
+  // return data;
+}
+
+export const  FetchBreClaimDetail = async (reqBody)=>{
+  // const [data, setData] = useState();
+  try {
+      const response = await fetch('http://localhost:3001/api/getBreClaimDetail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reqBody)
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch profile');
+      }
+      const json = await response.json();
+      return json.data;
+      // setData(json.data);
+    } catch (error) {
+      console.error("ViewProfileerror", error);
+    }
+  // return data;
+}

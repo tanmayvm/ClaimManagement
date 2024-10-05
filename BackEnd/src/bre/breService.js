@@ -20,16 +20,42 @@ return dataR[0];
 }
 
 export async function insertBreClaimDetail(detailTO){
-    const dataR = await sequelize.query('insert into BreClaimDetails (ClaimID,HeadID,ConveyanceID,EligibleAmt,BillPeriod,BillDate,ConveyanceRate,\
-        Amount,EmpRemarks,EmpExcessClaimRemarks,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt) \
-         values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',{
+    console.log("Acrtive",detailTO.ClaimDetailID)
+    let dataR= null;
+    if(!detailTO.ClaimDetailID){
+    await sequelize.query('insert into BreClaimDetails (ClaimID,HeadID,ConveyanceID,EligibleAmt,BillPeriod,BillDate,ConveyanceRate,\
+        Amount,EmpRemarks,EmpExcessClaimRemarks,CreatedBy,ModifiedBy,CreatedAt,ModifiedAt,Active) \
+         values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',{
         replacements: [detailTO.ClaimID,detailTO.HeadID,detailTO.ConveyanceID,detailTO.EligibleAmt,detailTO.BillPeriod,detailTO.BillDate,detailTO.ConveyanceRate
-            ,detailTO.Amount,detailTO.EmpRemarks,detailTO.EmpExcessClaimRemarks,detailTO.CreatedBy,detailTO.CreatedBy,formattedDate,formattedDate],
+            ,detailTO.Amount,detailTO.EmpRemarks,detailTO.EmpExcessClaimRemarks,detailTO.CreatedBy,detailTO.CreatedBy,formattedDate,formattedDate,detailTO.Active],
         type: QueryTypes.INSERT,
         raw:false
     })
+}
+else{
+    await BreClaimDetails.update({
+        HeadID:detailTO.HeadID,
+        ConveyanceID:detailTO.CatagoryID,
+        BillPeriod:detailTO.BillPeriod,
+        ConveyanceRate:detailTO.ConveyanceRate,
+        Amount:detailTO.Amount,
+        EmpRemarks:detailTO.EmpRemarks,
+        EmpExcessClaimRemarks:detailTO.EmpExcessClaimRemarks,
+        Active:detailTO.Active
+    },{
+        where :{ClaimDetailID:detailTO.ClaimDetailID},
+        returning:true
+    })
+}
+
+dataR = await BreClaimDetails.findAll({
+    where :{ClaimID:detailTO.ClaimID,Active:1},
+   raw:false
+})
+
+console.log(dataR)
 const data = [{'ID':1,'name':'a'},{'ID':2}]
-return data;
+return dataR;
 }
 
 export async function catagoryList(){
@@ -90,16 +116,25 @@ catch(e){
 export async function getClaimDetail(ClaimID){
     try{
         const data = await BreClaim.findAll({
-            where: { Active: true },
-            include: {
+            where: { Active: true },            
+            include: [{
+                model:Catagory,
+                attributes:['CatagoryName']
+            },
+                {
                 model: BreClaimDetails,
                 // where: { Active: true },
-                attributes: ['HeadID','ConveyanceID','EligibleAmt','BillPeriod','BillDate','ConveyanceRate','Amount','EmpRemarks','EmpExcessClaimRemarks'],
-            },
+                // attributes: ['HeadID','ConveyanceID','EligibleAmt','BillPeriod','BillDate','ConveyanceRate','Amount','EmpRemarks','EmpExcessClaimRemarks'],
+                include:{
+                    model:Head,
+                    attributes:['HeadName']
+                }
+            }],
             attributes: ['CatagoryID','Status','ApplicationDate'],
             where:{ClaimID:ClaimID}
-        }, {raw:true});
-        return data; 
+            
+        }, {raw:false});
+        return data.length > 0 ? data[0] : null; 
     }
     catch(e){
         console.error('Error fetching categories:', e);
@@ -117,9 +152,25 @@ export async function claimListService(EmpID){
             //     // where: { Active: true },
             //     attributes: ['HeadID','ConveyanceID','EligibleAmt','BillPeriod','BillDate','ConveyanceRate','Amount','EmpRemarks','EmpExcessClaimRemarks'],
             // },
-            attributes: ['ClaimID','EmpID','CatagoryID','Status','ApplicationDate'],
+            attributes: ['ClaimID','EmpID','CatagoryID','Status','ApplicationDate','TotalAmount','ClaimCode'],
             where:{EmpID:EmpID}
         }, {raw:true});
+        return data;    
+    }
+    catch(e){
+        console.error('Error fetching categories:', e);
+    throw e;
+    }
+}
+
+
+export async function breDetailListService(ClaimID){
+    try{
+        const data = await BreClaimDetails.findAll({
+            where: { Active: true },
+            // attributes: ['HeadID','ConveyanceID','EligibleAmt','BillPeriod','BillDate','ConveyanceRate','Amount','EmpRemarks','EmpExcessClaimRemarks'],
+            where:{ClaimID:ClaimID}
+        }, {raw:false});
         return data;    
     }
     catch(e){
