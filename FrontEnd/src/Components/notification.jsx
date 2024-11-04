@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './main.css';
 
-const Notification = ({ message, type, onClose }) => {
+const Notification = ({ noti, onClose }) => {
     const [visible, setVisible] = useState(false);
 
     const notificationStyles = {
@@ -21,7 +21,7 @@ const Notification = ({ message, type, onClose }) => {
 
 
     useEffect(() => {
-        if (message) {
+        if (noti.message) {
             setVisible(true);
             const timer = setTimeout(() => {
                 setVisible(false);
@@ -30,7 +30,7 @@ const Notification = ({ message, type, onClose }) => {
 
             return () => clearTimeout(timer);
         }
-    }, [message, onClose]);
+    }, [noti.message, onClose]);
 
     const onClose1 = () => {
         setVisible(false);
@@ -42,13 +42,13 @@ const Notification = ({ message, type, onClose }) => {
             {visible && (
                 <div
                     style={{
-                        ...notificationStyles[type] || notificationStyles.default,
+                        ...notificationStyles[noti.messageType] || notificationStyles.default,
                         padding: '10px',
                         margin: '10px 0',
                         borderRadius: '5px',
                     }}
                 >
-                    <span>{message}</span>
+                    <span>{noti.message}</span>
                     <button onClick={onClose1} style={{ marginLeft: '10px' }}>
                         Close
                     </button>

@@ -35,8 +35,7 @@ const BreMain = () => {
             <CatagoryBox getCat={setCatID} setCat={catID} />
             <HeadBox CatagoryID={catID} claimID={claimID} />
             <button ><Link to={'/'}>Back</Link></button>
-            <button >Submit</button>
-
+            <button >Submit</button>            
         </div>
     )
 }

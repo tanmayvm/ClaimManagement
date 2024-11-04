@@ -42,7 +42,7 @@ const BreClaim = sequelize.define('BreClaim', {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
     onUpdate: DataTypes.NOW,
-  }
+  },
 },{
   tableName: 'BreClaim',
   timestamps: false,

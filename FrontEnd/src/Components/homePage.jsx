@@ -20,6 +20,17 @@ const HomePage = () => {
                     <span><Link to={'/claimList'} aria-label="View my claims">My Claims</Link></span>
                 </label>
             </div>
+            <div>
+                <h2>ToDo's For FrontEnd</h2>
+                <div>1.Claim List --Done</div>
+                <div>2.New Claim --Done</div>
+                <div>3.Edit Claim --Done</div>
+                <div>4.Notification --Done</div>
+                <div>5.Submit --Pending</div>
+                <div>6. --Pending</div>
+                <div>7. --Pending</div>
+
+            </div>
         </div>
     );
 };

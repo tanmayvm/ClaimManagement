@@ -2,37 +2,41 @@ import React, { useEffect, useState, useRef } from 'react'
 import { FetchCatagory, FetchHead, FetchSaveHead, FetchBreDetail, FetchBreClaimDetail } from './fetchAPI'
 import Notification from './notification'
 
+const claimDetail = {
+    "ClaimDetailID": null,
+    "CatagoryID": null,
+    "HeadID": null,
+    "ConveyanceID": null,
+    "EligibleAmt": null,
+    "BillPeriod": null,
+    "BillDate": null,
+    "ConveyanceRate": null,
+    "Amount": null,
+    "EmpRemarks": null,
+    "EmpExcessClaimRemarks": null,
+    "Status": null,
+    "Active": 1
+};
+
+
 const HeadBox = (props) => {
     console.log('CatID', props.CatagoryID)
     const [head, sethead] = useState([]);
     const [breDetail, setbreDetail] = useState([]);
     const formRef = useRef(null);
     const [viewHead, setViewHead] = useState(0);
-    const [headForm, setHeadForm] = useState(
-        {
-            "ClaimDetailID": null,
-            "CatagoryID": null,
-            "HeadID": null,
-            "ConveyanceID": null,
-            "EligibleAmt": null,
-            "BillPeriod": null,
-            "BillDate": null,
-            "ConveyanceRate": null,
-            "Amount": null,
-            "EmpRemarks": null,
-            "EmpExcessClaimRemarks": null,
-            "Status": null,
-            "Active": 1
-        }
-    );
-
+    const [headForm, setHeadForm] = useState(claimDetail);
+    const [noti,setNoti]=useState[{
+        message:null,
+        messageType:null
+    }]
 
     useEffect(() => {
         setHeadForm(prevForm => ({ ...prevForm, ...props.claimID }));
     }, [props.claimID])
 
-    const [selectedOption, setSelectedOption] = useState(null);
-    const [headList, setHeadList] = useState()
+    // const [selectedOption, setSelectedOption] = useState(null);
+    // const [headList, setHeadList] = useState()
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -66,21 +70,7 @@ const HeadBox = (props) => {
     }, [props.ClaimID]);
 
     const AddNewHead = () => {
-        setHeadForm({
-            "ClaimDetailID": null,
-            "CatagoryID": null,
-            "HeadID": null,
-            "ConveyanceID": null,
-            "EligibleAmt": null,
-            "BillPeriod": null,
-            "BillDate": null,
-            "ConveyanceRate": null,
-            "Amount": null,
-            "EmpRemarks": null,
-            "EmpExcessClaimRemarks": null,
-            "Status": null,
-            "Active": 1
-        })
+        setHeadForm(claimDetail)
         setViewHead(1);
     }
 
@@ -96,6 +86,9 @@ const HeadBox = (props) => {
 
     const handleClick = async () => {
         try {
+            if(!headForm.HeadID){
+
+            }
 
             const response = await FetchSaveHead({
                 "ClaimID": props.claimID,
@@ -106,46 +99,24 @@ const HeadBox = (props) => {
                 "claim": headForm
             });
             console.log(response)
-            setmessage("Claim saved Successfully")
-            setmessageType("success");
+            setNoti({
+                message:"Claim saved Successfully",
+                messageType:"success"
+            })
             setbreDetail(response.data);
             setViewHead(0);
-            setHeadForm({
-                "ClaimDetailID": null,
-                "CatagoryID": null,
-                "HeadID": null,
-                "ConveyanceID": null,
-                "EligibleAmt": null,
-                "BillPeriod": null,
-                "BillDate": null,
-                "ConveyanceRate": null,
-                "Amount": null,
-                "EmpRemarks": null,
-                "EmpExcessClaimRemarks": null,
-                "Status": null,
-                "Active": 1
-            })
+            setHeadForm(claimDetail)
         } catch (error) {
             console.error('Error Saving Head data:', error);
+            setNoti({
+                message:"Data not saved",
+                messageType:"error"
+            })
         }
     }
 
     const handleClickCancle = () => {
-        setHeadForm({
-            "ClaimDetailID": null,
-            "CatagoryID": null,
-            "HeadID": null,
-            "ConveyanceID": null,
-            "EligibleAmt": null,
-            "BillPeriod": null,
-            "BillDate": null,
-            "ConveyanceRate": null,
-            "Amount": null,
-            "EmpRemarks": null,
-            "EmpExcessClaimRemarks": null,
-            "Status": null,
-            "Active": 1
-        })
+        setHeadForm(claimDetail)
         setViewHead(0);
     }
 
@@ -156,7 +127,7 @@ const HeadBox = (props) => {
     }
 
     return <div>
-        <Notification message={message} type={messageType} onClose={() => { setmessage(null); setmessageType(null); }} />
+        <Notification message={noti} onClose={() => { setmessage(null); setmessageType(null); }} />
         <div style={{ textAlign: 'right', borderRight: '50px' }}>
             <button onClick={AddNewHead}>Add Head</button>
         </div>

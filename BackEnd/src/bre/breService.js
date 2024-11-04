@@ -10,9 +10,9 @@ const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
 
 export async function insertBreClaim(claimTO){
     const dataR = await sequelize.query('insert into BreClaim (EmpID,CatagoryID,Status,Active,ApplicationDate,\
-        CreatedBy,ModifiedBy,CreatedAt,ModifiedAt) values (?,?,?,?,?,?,?,?,?)',{
+        CreatedBy,ModifiedBy,CreatedAt,ModifiedAt,ClaimCode) values (?,?,?,?,?,?,?,?,?,?)',{
         replacements: [claimTO.EmpID,claimTO.CatagoryID,claimTO.State,1,claimTO.ApplicationDate,claimTO.EmpID,claimTO.EmpID,
-            formattedDate,formattedDate],
+            formattedDate,formattedDate,claimTO.ClaimCode],
         type: QueryTypes.INSERT,
         raw:false
     })
@@ -130,7 +130,7 @@ export async function getClaimDetail(ClaimID){
                     attributes:['HeadName']
                 }
             }],
-            attributes: ['CatagoryID','Status','ApplicationDate'],
+            attributes: ['CatagoryID','Status','ApplicationDate','ClaimCode'],
             where:{ClaimID:ClaimID}
             
         }, {raw:false});

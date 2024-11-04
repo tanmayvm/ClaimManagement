@@ -9,12 +9,22 @@ export async function  breNewClaimSave(req,res) {
         CatagoryName:null
     }
     
+function claimCode(empID,date){
+    var date2 = date.replace(/-/g,'');
+    return ('BRE/'+empID+'/'+date2+'/'+Math.floor(100000 + Math.random() * 900000))
+}
+
     const claimTO ={
         EmpID: req.body.EmpID,
         CatagoryID:req.body.CatagoryID,
         State:req.body.State,
-        ApplicationDate:req.body.ApplicationDate
+        ApplicationDate:req.body.ApplicationDate,
+        ClaimCode:req.body.ClaimCode 
     }
+    if(!claimTO.ClaimCode){
+        claimTO.ClaimCode=claimCode(req.body.EmpID,req.body.ApplicationDate)
+        }
+        
     try{
         let claim;
         let claimDataTO
